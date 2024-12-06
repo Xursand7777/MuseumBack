@@ -5,11 +5,11 @@ import {
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
-    ManyToMany,
 } from 'typeorm';
 import {Role} from "../../../common/constants/roles.enum";
+import { Exhibit } from '../../exhibit/entities/exhibit.entity';
 
-@Entity('users')
+@Entity('Users')
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
@@ -39,4 +39,8 @@ export class User {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedAt: Date;
+
+    @OneToMany(() => Exhibit, (exhibit) => exhibit.createdBy)
+    exhibits: Exhibit[];
+
 }

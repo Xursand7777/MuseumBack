@@ -5,6 +5,9 @@ import JwtModule from './config/jwt';
 import DbModule from './config/db';
 import {ConfigModule} from "@nestjs/config";
 import {UserModule} from "./modules/user/user.module";
+import { ExhibitModule } from './modules/exhibit/exhibit.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AudioModule } from './modules/files/audio.module';
 
 @Module({
   imports: [
@@ -14,7 +17,10 @@ import {UserModule} from "./modules/user/user.module";
     }),
     JwtModule,
     DbModule,
-    UserModule
+    AudioModule,
+    AuthModule,
+    UserModule,
+    ExhibitModule
   ],
   controllers: [AppController],
   providers: [AppService],
