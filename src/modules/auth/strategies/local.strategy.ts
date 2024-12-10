@@ -14,7 +14,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     async validate(payload: any) {
-        // Метод validate возвращает полезную нагрузку токена, которая будет доступна в req.user
-        return { userId: payload.sub, username: payload.username };
+        return { userId: payload.userId, email: payload.email, role: payload.role };
     }
+
+
 }
+
+

@@ -1,10 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import {CorsOptions} from "@nestjs/common/interfaces/external/cors-options.interface";
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import * as fs from 'fs';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const uploadDir = join(__dirname, '..', 'uploads', 'audioFiles');
@@ -28,29 +28,25 @@ async function bootstrap() {
     optionsSuccessStatus: 204,
     credentials: true, // Поддержка отправки cookies
   };
+
+
+  // Настройка Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Museum Back Api') // Название API
+    .setDescription('API documentation for m') // Описание
+    .setVersion('1.0') // Версия
+    .addBearerAuth() // Подключение авторизации
+    .build();
+
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true, // Сохранять авторизацию между запросами
+    },
+  });
+
+
   app.enableCors(corsOptions); // Передаём corsOptions в enableCors
-
-
-
-    const config = new DocumentBuilder()
-        .setTitle('Museum')
-        .setDescription('The museum API description')
-        .setVersion('1.0f')
-        .addBearerAuth(
-            {
-                type: 'http',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
-                name: 'JWT',
-                description: 'Enter JWT token',
-                in: 'header',
-            },
-            'jwt',
-        )
-        .build();
-    const documentFactory = () => SwaggerModule.createDocument(app, config);
-    SwaggerModule.setup('api', app, documentFactory);
-  // Настройка статической раздачи файлов
 
   await app.listen(process.env.PORT ?? 3000);
 }

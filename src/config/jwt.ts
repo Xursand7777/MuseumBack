@@ -7,6 +7,6 @@ export const JwtConfigModule = JwtModule.registerAsync({
     inject: [ConfigService], // Инжектируем ConfigService
     useFactory: async (configService: ConfigService) => ({
         secret: configService.get<string>('JWT_SECRET'), // Читаем JWT_SECRET через ConfigService
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '1d' },
     }),
 });
