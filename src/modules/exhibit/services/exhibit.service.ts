@@ -4,17 +4,39 @@ import { Repository } from 'typeorm';
 import { Exhibit } from '../entities/exhibit.entity';
 import { CreateExhibitDto } from '../dto/create-exhibit.dto';
 import { UpdateExhibitDto } from '../dto/update-exhibit.dto';
+import { User } from '../../user/entities/user.entity';
 
 @Injectable()
 export class ExhibitService {
   constructor(
     @InjectRepository(Exhibit)
     private readonly exhibitRepository: Repository<Exhibit>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
   ) {}
 
   // Create a new exhibit
-  async create(createExhibitDto: CreateExhibitDto): Promise<Exhibit> {
-    const exhibit = this.exhibitRepository.create(createExhibitDto);
+  async create(createExhibitDto: CreateExhibitDto, userId: number): Promise<Exhibit> {
+    const exhibit = new Exhibit();
+
+    // Заполнение полей
+    exhibit.name = createExhibitDto.name;
+    exhibit.uzText = createExhibitDto.uzText;
+    exhibit.ruText = createExhibitDto.ruText;
+    exhibit.enText = createExhibitDto.enText;
+    exhibit.uzAudioName = createExhibitDto.uzAudioName;
+    exhibit.ruAudioName = createExhibitDto.ruAudioName;
+    exhibit.enAudioName = createExhibitDto.enAudioName;
+
+    // Связываем с пользователем
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new Error('User not found');
+    }
+    exhibit.createdBy = user;
+    exhibit.createdById = user.id;
+
+    // Сохранение записи
     return this.exhibitRepository.save(exhibit);
   }
 

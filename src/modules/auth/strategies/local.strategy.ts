@@ -1,14 +1,20 @@
-import {Injectable} from "@nestjs/common";
-import {AuthService} from "../services/auth.service";
-import {User} from "../../user/entities/user.entity";
+import { Injectable } from '@nestjs/common';
+import { PassportStrategy } from '@nestjs/passport';
+import { ExtractJwt, Strategy } from 'passport-jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
-export class LocalStrategy {
-    constructor(private authService: AuthService) {
-        // super({ usernameField: 'email' }); // Use 'email' instead of 'username'
+export class JwtStrategy extends PassportStrategy(Strategy) {
+    constructor(private configService: ConfigService) {
+        super({
+            jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ignoreExpiration: false,
+            secretOrKey: configService.get<string>('JWT_SECRET'),
+        });
     }
 
-    async validate(email: string, password: string): Promise<User> {
-        return this.authService.validateUser(email, password);
+    async validate(payload: any) {
+        // Метод validate возвращает полезную нагрузку токена, которая будет доступна в req.user
+        return { userId: payload.sub, username: payload.username };
     }
 }

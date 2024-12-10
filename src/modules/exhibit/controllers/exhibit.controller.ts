@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Patch, Delete, Param, Body } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Delete, Param, Body, UseGuards, Request  } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ExhibitService } from '../services/exhibit.service';
 import { CreateExhibitDto } from '../dto/create-exhibit.dto';
 import { UpdateExhibitDto } from '../dto/update-exhibit.dto';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
 
 @ApiTags('Exhibits')
 @Controller('exhibits')
@@ -10,9 +11,11 @@ export class ExhibitController {
   constructor(private readonly exhibitService: ExhibitService) {}
 
   // Create a new exhibit
+  @UseGuards(JwtAuthGuard)
   @Post()
-  async create(@Body() createExhibitDto: CreateExhibitDto) {
-    return this.exhibitService.create(createExhibitDto);
+  async create(@Body() createExhibitDto: CreateExhibitDto, @Request() req: any) {
+    const userId = req.user.userId; // Извлечение userId из токена
+    return this.exhibitService.create(createExhibitDto, userId);
   }
 
   // Get all exhibits

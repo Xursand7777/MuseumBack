@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import JwtModule from './config/jwt';
 import DbModule from './config/db';
+import { JwtConfigModule } from './config/jwt';
 import {ConfigModule} from "@nestjs/config";
 import {UserModule} from "./modules/user/user.module";
 import { ExhibitModule } from './modules/exhibit/exhibit.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AudioModule } from './modules/files/audio.module';
+
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { AudioModule } from './modules/files/audio.module';
       envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.local',
       isGlobal: true
     }),
-    JwtModule,
+    JwtConfigModule, // Импортируем как JwtConfigModule
     DbModule,
     AudioModule,
     AuthModule,

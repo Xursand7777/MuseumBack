@@ -1,8 +1,12 @@
 import { JwtModule } from '@nestjs/jwt';
-import {jwtConstants} from "../common/constants/jwt";
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
-export default JwtModule.register({
-    global: true,
-    secret: jwtConstants.secret,
-    signOptions: { expiresIn: '60s' },
+
+export const JwtConfigModule = JwtModule.registerAsync({
+    imports: [ConfigModule], // Импорт ConfigModule
+    inject: [ConfigService], // Инжектируем ConfigService
+    useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'), // Читаем JWT_SECRET через ConfigService
+        signOptions: { expiresIn: '60s' },
+    }),
 });
