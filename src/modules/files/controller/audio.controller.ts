@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Controller, Get, NotFoundException, Param,
   Post, Res,
   UploadedFile,
@@ -23,18 +24,19 @@ export class AudioController {
       storage: diskStorage({
         destination: './uploads/audioFiles', // Путь к папке для хранения файлов
         filename: (req, file, callback) => {
-          // Генерация уникального имени файла на основе id и languageType
-          const id = req.body.id; // Предполагаем, что ID передаётся в теле запроса
-          const languageType = req.body.languageType; // Тип языка из тела запроса
-          const audioFileName = req.body.audioFileName;
+          const { id, languageType, audioFileName } = req.body;
 
-          if (!id || !languageType) {
-            return callback(new Error('ID и язык должны быть указаны!'), null);
+          if (!file) {
+            throw new BadRequestException('Файл не был загружен!');
           }
 
-          // Устанавливаем имя файла как {id}-{languageType}.mp3
-          const newFileName = `${id}-${audioFileName}-${languageType}.mp3`;
+          if (!id || !languageType) {
+            throw new BadRequestException('ID и язык должны быть указаны!');
+          }
 
+          // Генерация имени файла
+          const sanitizedFileName = audioFileName.replace(/[^a-zA-Zа-яА-Я0-9]/g, '');
+          const newFileName = `${id}-${sanitizedFileName}-${languageType}.mp3`;
           callback(null, newFileName);
         },
       }),

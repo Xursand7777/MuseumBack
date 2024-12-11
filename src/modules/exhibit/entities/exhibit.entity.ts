@@ -15,7 +15,7 @@ export class Exhibit {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   name: string;
 
   @Column({ type: 'varchar', length: 255, nullable: true })
@@ -30,13 +30,13 @@ export class Exhibit {
   @Column({ type: 'text' })
   enText: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   uzAudioName: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   ruAudioName: string;
 
-  @Column({ type: 'varchar', length: 255 })
+  @Column({ type: 'varchar', length: 255, nullable: true })
   enAudioName: string;
 
   @ManyToOne(() => User, (user) => user.exhibits)

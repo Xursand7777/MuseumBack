@@ -2,17 +2,17 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class UploadAudioFileDto {
-  @ApiProperty({ description: 'ID файла' })
+  @ApiProperty({ description: 'ID файла', type: String })
   @IsNotEmpty()
   @IsString()
   id: string;
 
-  @ApiProperty({ description: 'Тип языка (например: en, ru, uz)' })
+  @ApiProperty({ description: 'Тип языка (например: en, ru, uz)', type: String })
   @IsNotEmpty()
   @IsString()
   languageType: string;
 
-  @ApiProperty({ description: 'Имя аудиофайла' })
+  @ApiProperty({ description: 'Имя аудиофайла', type: String })
   @IsNotEmpty()
   @IsString()
   audioFileName: string;

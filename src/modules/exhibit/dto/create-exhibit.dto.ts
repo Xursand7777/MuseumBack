@@ -4,7 +4,6 @@ import { IsNotEmpty, IsString } from 'class-validator';
 export class CreateExhibitDto {
    @ApiProperty()
    @IsString()
-   @IsNotEmpty()
    name: string;
 
   @ApiProperty()
@@ -24,16 +23,13 @@ export class CreateExhibitDto {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   uzAudioName: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   ruAudioName: string;
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
   enAudioName: string;
 }
