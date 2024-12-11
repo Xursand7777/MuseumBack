@@ -11,7 +11,7 @@ import { join } from 'path';
 import { ApiConsumes, ApiBody, ApiTags, ApiParam } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UploadAudioFileDto } from '../dto/uploadFileDto';
-import { existsSync } from 'fs';
+import { readdirSync, existsSync } from 'fs';
 
 
 @ApiTags('audio') // Группа маршрутов в Swagger
@@ -65,27 +65,35 @@ export class AudioController {
     };
   }
 
-  @Get(':id/:audioFileName/:languageType')
+  @Get(':id/:languageType')
   @ApiParam({ name: 'id', description: 'ID аудиофайла' })
-  @ApiParam({ name: 'audioFileName', description: 'Имя аудиофайла (без расширения)' })
   @ApiParam({ name: 'languageType', description: 'Тип языка (например: en, ru, uz)' })
   async getAudioFile(
     @Param('id') id: string,
-    @Param('audioFileName') audioFileName: string,
     @Param('languageType') languageType: string,
     @Res() res: Response,
   ) {
-    const filePath = join(
-      process.cwd(), // Абсолютный путь от корня проекта
-      'uploads',
-      'audioFiles',
-      `${id}-${audioFileName}-${languageType}.mp3`,
+    const directoryPath = join(process.cwd(), 'uploads', 'audioFiles');
+
+    // Проверяем, существует ли директория
+    if (!existsSync(directoryPath)) {
+      throw new NotFoundException('Директория с файлами не найдена!');
+    }
+
+    // Читаем все файлы в директории
+    const files = readdirSync(directoryPath);
+
+    // Ищем файл, соответствующий id и languageType
+    const matchingFile = files.find((file) =>
+      file.startsWith(`${id}-`) && file.endsWith(`-${languageType}.mp3`),
     );
 
-    // Проверяем, существует ли файл
-    if (!existsSync(filePath)) {
+    if (!matchingFile) {
       throw new NotFoundException('Файл не найден!');
     }
+
+    // Полный путь к найденному файлу
+    const filePath = join(directoryPath, matchingFile);
 
     // Отправляем файл клиенту
     return res.sendFile(filePath);
