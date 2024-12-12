@@ -1,6 +1,6 @@
 import {
-  BadRequestException,
-  Controller, Get, NotFoundException, Param,
+  BadRequestException, Body,
+  Controller, Delete, Get, NotFoundException, Param,
   Post, Res,
   UploadedFile,
   UseInterceptors,
@@ -11,7 +11,7 @@ import { join } from 'path';
 import { ApiConsumes, ApiBody, ApiTags, ApiParam } from '@nestjs/swagger';
 import { Response } from 'express';
 import { UploadAudioFileDto } from '../dto/uploadFileDto';
-import { readdirSync, existsSync } from 'fs';
+import { readdirSync, existsSync, unlinkSync } from 'fs';
 
 
 @ApiTags('audio') // Группа маршрутов в Swagger
@@ -98,6 +98,47 @@ export class AudioController {
     // Отправляем файл клиенту
     return res.sendFile(filePath);
   }
+
+  // Удаление файла по audioFilePath
+  @Delete(':id/:languageType')
+  @ApiParam({ name: 'id', description: 'ID аудиофайла' })
+  @ApiParam({ name: 'languageType', description: 'Тип языка (например: en, ru, uz)' })
+  async deleteAudioFile(
+    @Param('id') id: string,
+    @Param('languageType') languageType: string,
+  ) {
+    const directoryPath = join(process.cwd(), 'uploads', 'audioFiles');
+
+    // Проверяем, существует ли директория
+    if (!existsSync(directoryPath)) {
+      throw new NotFoundException('Директория с файлами не найдена!');
+    }
+
+    // Читаем все файлы в директории
+    const files = readdirSync(directoryPath);
+
+    // Ищем файл, соответствующий id и languageType
+    const matchingFile = files.find((file) =>
+      file.startsWith(`${id}-`) && file.endsWith(`-${languageType}.mp3`),
+    );
+
+    if (!matchingFile) {
+      throw new NotFoundException('Файл не найден!');
+    }
+
+    // Полный путь к найденному файлу
+    const filePath = join(directoryPath, matchingFile);
+
+    try {
+      // Удаляем файл
+      unlinkSync(filePath);
+      return { message: 'Файл успешно удален!', file: matchingFile };
+    } catch (err) {
+      console.error('Ошибка при удалении файла:', err);
+      throw new BadRequestException('Не удалось удалить файл!');
+    }
+  }
+
 
 
 }
