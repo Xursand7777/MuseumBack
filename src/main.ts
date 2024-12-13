@@ -22,18 +22,24 @@ async function bootstrap() {
   });
   // Настройка CORS
   const corsOptions: CorsOptions = {
-    origin: 'http://localhost:4200', // Фронтенд адрес
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE', // Разрешённые методы
+    origin: ['http://localhost:4200', 'http://aloqamuzeyimp3.uz'], // Только домены
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,
-    credentials: true, // Поддержка отправки cookies
+    credentials: true,
+    allowedHeaders: 'Content-Type, Authorization', // Укажите нужные заголовки
   };
+  app.setGlobalPrefix('api');
+  app.enableCors(corsOptions);
+
+
+
 
 
   // Настройка Swagger
   const config = new DocumentBuilder()
     .setTitle('Museum Back Api') // Название API
-    .setDescription('API documentation for m') // Описание
+    .setDescription('API documentation for museum') // Описание
     .setVersion('1.0') // Версия
     .addBearerAuth() // Подключение авторизации
     .build();

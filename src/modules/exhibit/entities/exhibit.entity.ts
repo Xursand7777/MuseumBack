@@ -62,4 +62,7 @@ export class Exhibit {
 
   @Column({ type: 'int', default: 0 })
   shotTimes: number;
+
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
 }

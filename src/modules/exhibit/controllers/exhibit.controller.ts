@@ -43,12 +43,16 @@ export class ExhibitController {
   }
 
   // Delete (soft delete) an exhibit
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth() // Указываем, что этот маршрут требует авторизации
   @Delete(':id')
   async remove(
     @Param('id') id: number,
     @Body('deletedBy') deletedBy: string,
+    @Request() req: any
   ) {
-    return this.exhibitService.remove(id, deletedBy);
+    const userId = req.user.userId.toString(); // Извлечение userId из токена
+    return this.exhibitService.remove(id, userId);
   }
 
   // Restore a soft-deleted exhibit

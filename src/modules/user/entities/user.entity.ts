@@ -20,8 +20,8 @@ export class User {
     @Column()
     password: string; // Password should be hashed
 
-    @Column()
-    name: string;
+    @Column({ type: 'varchar', nullable: true }) // Разрешаем null
+    name?: string;
 
     @Column({
         type: 'enum',

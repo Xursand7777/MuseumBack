@@ -42,12 +42,12 @@ export class ExhibitService {
 
   // Get all exhibits
   async findAll(): Promise<Exhibit[]> {
-    return this.exhibitRepository.find();
+    return this.exhibitRepository.find({ where: { isActive: true } });
   }
 
   // Get a single exhibit by ID
   async findOne(id: number): Promise<Exhibit> {
-    const exhibit = await this.exhibitRepository.findOne({ where: { id } });
+    const exhibit = await this.exhibitRepository.findOne({ where: { id, isActive: true } });
     if (!exhibit) {
       throw new NotFoundException(`Exhibit with ID ${id} not found`);
     }
@@ -65,14 +65,17 @@ export class ExhibitService {
   async remove(id: number, deletedBy: string): Promise<void> {
     const exhibit = await this.findOne(id);
     exhibit.deletedBy = deletedBy;
-    await this.exhibitRepository.softRemove(exhibit);
+    exhibit.isActive = false;
+    await this.exhibitRepository.save(exhibit);
   }
 
   // Restore a soft-deleted exhibit
   async restore(id: number): Promise<void> {
-    const result = await this.exhibitRepository.restore(id);
-    if (result.affected === 0) {
-      throw new NotFoundException(`Exhibit with ID ${id} not found or not deleted`);
+    const exhibit = await this.exhibitRepository.findOne({ where: { id } });
+    if (!exhibit) {
+      throw new NotFoundException(`Exhibit with ID ${id} not found`);
     }
+    exhibit.isActive = true;
+    await this.exhibitRepository.save(exhibit);
   }
 }
