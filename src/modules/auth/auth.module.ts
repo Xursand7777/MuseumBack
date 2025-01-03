@@ -16,7 +16,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         imports: [ConfigModule], // Подключаем ConfigModule
         inject: [ConfigService], // Инжектируем ConfigService
         useFactory: async (configService: ConfigService) => ({
-          secret: configService.get<string>('JWT_SECRET'), // Получаем секрет из переменных окружения
+          secret: 'nestone', // Получаем секрет из переменных окружения
           signOptions: { expiresIn: '1d' }, // Опционально задаем срок действия токена
         }),
       }),

@@ -15,8 +15,8 @@ import { join } from 'path';
 @Module({
   imports: [
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'client'), // Указываем путь к собранным клиентским файлам
-      renderPath: '*', // Все маршруты отправляются на index.html
+      rootPath: join(__dirname, '..', 'dist'), // Указываем путь к собранным клиентским файлам
+      exclude: ['/api*'], // Исключаем маршруты API из перенаправления на статические файлы
     }),
     ConfigModule.forRoot({
       envFilePath: process.env.NODE_ENV === 'production' ? '.env.production' : '.env.local',

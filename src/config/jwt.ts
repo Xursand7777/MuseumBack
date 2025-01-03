@@ -6,7 +6,7 @@ export const JwtConfigModule = JwtModule.registerAsync({
     imports: [ConfigModule], // Импорт ConfigModule
     inject: [ConfigService], // Инжектируем ConfigService
     useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET'), // Читаем JWT_SECRET через ConfigService
+        secret: 'nestone', // Читаем JWT_SECRET через ConfigService
         signOptions: { expiresIn: '1d' },
     }),
 });

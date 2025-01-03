@@ -16,25 +16,16 @@ async function bootstrap() {
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-
-  app.useStaticAssets(join(__dirname, '..', 'uploads'), {
-    prefix: '/uploads/',
-  });
   // Настройка CORS
   const corsOptions: CorsOptions = {
-    origin: ['http://localhost:4200', 'http://aloqamuzeyimp3.uz'], // Только домены
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    preflightContinue: false,
+    origin: [' http://localhost:4200/', 'https://192.168.10.60:9107/', 'https://aloqamuzeyimp3.uz/'], // Только домены
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    preflightContinue: true,
     optionsSuccessStatus: 204,
     credentials: true,
     allowedHeaders: 'Content-Type, Authorization', // Укажите нужные заголовки
   };
   app.setGlobalPrefix('api');
-  app.enableCors(corsOptions);
-
-
-
-
 
   // Настройка Swagger
   const config = new DocumentBuilder()
